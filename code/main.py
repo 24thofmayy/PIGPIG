@@ -1,8 +1,8 @@
 import pygame, sys
 from level import *
-from player import *
+from sprites import *
 from settings import *
-blue = 18, 78, 137  
+  
 
 class Game:
 	def __init__(self):  
@@ -12,8 +12,21 @@ class Game:
 		self.clock = pygame.time.Clock()
 		#self.font = pygame.font.Font('Arial',32)
 		self.running = True
+		self.character_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/redsamurai.png')
+		self.terrain_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetFloor.png")
+		self.object_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetNature.png")
+
 		pygame.display.set_caption('PIG KILLER')	
 	
+	def createTilemap(self):
+		for i, row in enumerate(tilemap):
+			for j, column in enumerate(row):
+				Ground(self, j, i)
+				if column == "B":
+					Block(self, j, i)
+				if column == "P":
+					Player(self, j, i)
+
 	def new(self):
 		# start new game
 		self.playing = True
@@ -24,18 +37,15 @@ class Game:
 		self.enemie = pygame.sprite.LayeredUpdates()
 		self.attack = pygame.sprite.LayeredUpdates()
 
-		self.player = Player(self, 1, 2)
+		self.createTilemap()
+
 	def events(self):
 		# game loop events
 		for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.playing = False
 					self.running = False
-			# 		pygame.quit()
-			# 		sys.exit()	
-			# self.screen.fill(blue)
-			# pygame.display.update()
-			# self.clock.tick(FPS)
+
 	def update(self):
 		# game loop update
 		# find the update method in every sprites in that group and run it
@@ -72,6 +82,3 @@ while g.running:
 
 pygame.quit()
 sys.exit()
-# if __name__ == '__main__':
-# 	game = Game()
-# 	game.run()
