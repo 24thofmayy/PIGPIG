@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
 
 		self.facing = 'down'
 
-		self.image = self.game.character_spritesheet.get_sprite(0, 0, self.width, self.height)
+		self.image = self.game.character_spritesheet.get_sprite(0, 0, 16, 16)
 		self.image = pygame.transform.scale((self.image),(32,32))
 
 		# rect is where the image in sprites positioned and sized 
@@ -48,7 +48,9 @@ class Player(pygame.sprite.Sprite):
 		self.movement()
 
 		self.rect.x += self.x_change
+		self.collide_blocks('x')
 		self.rect.y += self.y_change
+		self.collide_blocks('y')
 
 		self.x_change = 0
 		self.y_change = 0
@@ -66,7 +68,26 @@ class Player(pygame.sprite.Sprite):
 			self.facing = 'up'
 		if keys[pygame.K_s]:
 			self.y_change += PLAYER_SPEED
-			self.facing = 'down'		
+			self.facing = 'down'	
+
+	def collide_blocks(self, direction):
+		if direction == "x":
+			# check if the sprite ซ้อนกัน
+			hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
+			if hits:
+				if self.x_change > 0:
+					self.rect.x = hits[0].rect.left - self.rect.width
+				if self.x_change < 0:
+					self.rect.x = hits[0].rect.right 
+
+		if direction == "y":
+			hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
+			if hits:
+				if self.y_change > 0:
+					self.rect.y = hits[0].rect.top - self.rect.height
+				
+				if self.y_change < 0:
+					self.rect.y = hits[0].rect.bottom
 
 class Block(pygame.sprite.Sprite):
 	def __init__(self, game, x, y):
@@ -82,7 +103,7 @@ class Block(pygame.sprite.Sprite):
 		self.height = TILESIZE
 
 		self.image = self.game.object_spritesheet.get_sprite(32, 0, 32, 32)
-		self.image = pygame.transform.scale((self.image),(16,16))
+		self.image = pygame.transform.scale((self.image),(32,32))
 
 		self.rect = self.image.get_rect()
 		self.rect.x = self.x
@@ -101,7 +122,8 @@ class Ground(pygame.sprite.Sprite):
 		self.height = TILESIZE
 
 		self.image = self.game.terrain_spritesheet.get_sprite(32, 176, self.width, self.height)
-		
+		self.image = pygame.transform.scale((self.image),(32,32))
+
 		self.rect = self.image.get_rect()
 		self.rect.x = self.x
 		self.rect.y = self.y
