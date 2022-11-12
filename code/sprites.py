@@ -35,9 +35,10 @@ class Player(pygame.sprite.Sprite):
 		self.y_change = 0
 
 		self.facing = 'down'
+		self.animation_loop = 1
 
-		self.image = self.game.character_spritesheet.get_sprite(0, 0, 16, 16)
-		self.image = pygame.transform.scale((self.image),(32,32))
+		self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+		
 
 		# rect is where the image in sprites positioned and sized 
 		self.rect = self.image.get_rect()
@@ -46,6 +47,7 @@ class Player(pygame.sprite.Sprite):
 
 	def update(self):
 		self.movement()
+		self.animate()
 
 		self.rect.x += self.x_change
 		self.collide_blocks('x')
@@ -88,6 +90,67 @@ class Player(pygame.sprite.Sprite):
 				
 				if self.y_change < 0:
 					self.rect.y = hits[0].rect.bottom
+
+	def animate(self):
+		down_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 48, 16, 16)),(32,32))]
+
+		up_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 48, 16, 16)),(32,32))]
+
+		left_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 48, 16, 16)),(32,32))]
+
+		right_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
+		
+		if self.facing == "down":
+			if self.y_change == 0:
+				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+			else:
+				self.image = down_animations[math.floor(self.animation_loop)]
+				# change animation every 10 frames
+				self.animation_loop += 0.1
+				if self.animation_loop >= 4:
+					self.animation_loop = 1
+
+		if self.facing == "up":
+			if self.y_change == 0:
+				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
+			else:
+				self.image = up_animations[math.floor(self.animation_loop)]
+				# change animation every 10 frames
+				self.animation_loop += 0.1
+				if self.animation_loop >= 4:
+					self.animation_loop = 1	
+
+		if self.facing == "left":
+			if self.x_change == 0:
+				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
+			else:
+				self.image = left_animations[math.floor(self.animation_loop)]
+				# change animation every 10 frames
+				self.animation_loop += 0.1
+				if self.animation_loop >= 4:
+					self.animation_loop = 1
+
+		if self.facing == "right":
+			if self.x_change == 0:
+				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
+			else:
+				self.image = right_animations[math.floor(self.animation_loop)]
+				# change animation every 10 frames
+				self.animation_loop += 0.1
+				if self.animation_loop >= 4:
+					self.animation_loop = 1	
 
 class Block(pygame.sprite.Sprite):
 	def __init__(self, game, x, y):
