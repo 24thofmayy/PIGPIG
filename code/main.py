@@ -15,6 +15,7 @@ class Game:
 		self.character_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/redsamurai.png')
 		self.terrain_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetFloor.png")
 		self.object_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetNature.png")
+		self.enemy_spritesheet = Spritesheet('../assets/graphic/test/Octopus2/SpriteSheet.png')
 
 		pygame.display.set_caption('PIG KILLER')	
 	
@@ -24,6 +25,8 @@ class Game:
 				Ground(self, j, i)
 				if column == "B":
 					Block(self, j, i)
+				if column == "E":
+					Enemy(self, j, i)
 				if column == "P":
 					Player(self, j, i)
 
@@ -34,7 +37,7 @@ class Game:
 		# contain all sprites in game
 		self.all_sprites = pygame.sprite.LayeredUpdates()
 		self.blocks = pygame.sprite.LayeredUpdates()
-		self.enemie = pygame.sprite.LayeredUpdates()
+		self.enemies = pygame.sprite.LayeredUpdates()
 		self.attack = pygame.sprite.LayeredUpdates()
 
 		self.createTilemap()
