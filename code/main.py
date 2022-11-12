@@ -10,12 +10,14 @@ class Game:
 		pygame.init()
 		self.screen = pygame.display.set_mode((WIDTH,HEIGTH))
 		self.clock = pygame.time.Clock()
-		#self.font = pygame.font.Font('Arial',32)
 		self.running = True
+		self.font = pygame.font.Font('../assets/Mario-Kart-DS.ttf', 32)
+
 		self.character_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/redsamurai.png')
 		self.terrain_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetFloor.png")
 		self.object_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetNature.png")
 		self.enemy_spritesheet = Spritesheet('../assets/graphic/test/Octopus2/SpriteSheet.png')
+		self.intro_background = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/menu.png'),(WIDTH,HEIGTH))
 
 		pygame.display.set_caption('PIG KILLER')	
 	
@@ -74,7 +76,29 @@ class Game:
 		pass
 	
 	def intro_screen(self):
-		pass
+		intro = True
+
+		title = self.font.render('SQUID KILLER !!', True, WHITE)
+		title_rect = title.get_rect(x=190, y=180)
+
+		play_button = Button(260, 280, 100, 30, WHITE,BLACK, 'PLAY', 26)
+		while intro:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					intro = False
+					self.running = False
+
+			mouse_pos = pygame.mouse.get_pos()
+			mouse_pressed = pygame.mouse.get_pressed()
+
+			if play_button.is_pressed(mouse_pos,mouse_pressed):
+				intro = False
+
+			self.screen.blit(self.intro_background, (0,0))
+			self.screen.blit(title, title_rect)
+			self.screen.blit(play_button.image, play_button.rect)
+			self.clock.tick(FPS)
+			pygame.display.update()
 
 g = Game()
 g.intro_screen()
