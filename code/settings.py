@@ -5,7 +5,7 @@ TILESIZE = 32
 
 WIDTH    = 640
 HEIGTH   = 480
-center = ((WIDTH/2),(HEIGTH/2))
+CENTER = ((WIDTH/2),(HEIGTH/2))
 FPS      = 60
 
 PLAYER_LAYER = 4

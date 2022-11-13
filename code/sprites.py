@@ -46,6 +46,34 @@ class Player(pygame.sprite.Sprite):
 		self.rect.x = self.x
 		self.rect.y = self.y
 
+		self.down_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 48, 16, 16)),(32,32))]
+
+		self.up_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 48, 16, 16)),(32,32))]
+
+		self.left_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 48, 16, 16)),(32,32))]
+
+		self.right_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
+
+		self.down_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+
+		self.up_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
+
+		self.left_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
+
+		self.right_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
+
 	def update(self):
 		self.movement()
 		self.animate()
@@ -63,15 +91,23 @@ class Player(pygame.sprite.Sprite):
 	def movement(self):
 		keys = pygame.key.get_pressed()
 		if keys[pygame.K_a]:
+			for sprite in self.game.all_sprites:
+				sprite.rect.x += PLAYER_SPEED
 			self.x_change -= PLAYER_SPEED
 			self.facing = 'left'
 		if keys[pygame.K_d]:
+			for sprite in self.game.all_sprites:
+				sprite.rect.x -= PLAYER_SPEED
 			self.x_change += PLAYER_SPEED
 			self.facing = 'right'
 		if keys[pygame.K_w]:
+			for sprite in self.game.all_sprites:
+				sprite.rect.y += PLAYER_SPEED
 			self.y_change -= PLAYER_SPEED
 			self.facing = 'up'
 		if keys[pygame.K_s]:
+			for sprite in self.game.all_sprites:
+				sprite.rect.y -= PLAYER_SPEED
 			self.y_change += PLAYER_SPEED
 			self.facing = 'down'
 		if keys[pygame.K_SPACE]:
@@ -90,55 +126,34 @@ class Player(pygame.sprite.Sprite):
 			if hits:
 				if self.x_change > 0:
 					self.rect.x = hits[0].rect.left - self.rect.width
+					for sprite in self.game.all_sprites:
+						sprite.rect.x += PLAYER_SPEED
 				if self.x_change < 0:
-					self.rect.x = hits[0].rect.right 
+					self.rect.x = hits[0].rect.right
+					for sprite in self.game.all_sprites:
+						sprite.rect.x -= PLAYER_SPEED
 
 		if direction == "y":
 			hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
 			if hits:
 				if self.y_change > 0:
 					self.rect.y = hits[0].rect.top - self.rect.height
+					for sprite in self.game.all_sprites:
+						sprite.rect.y += PLAYER_SPEED
 				
 				if self.y_change < 0:
 					self.rect.y = hits[0].rect.bottom
+					for sprite in self.game.all_sprites:
+						sprite.rect.y -= PLAYER_SPEED
 
-	def animate(self):
-		down_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 48, 16, 16)),(32,32))]
-
-		up_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 48, 16, 16)),(32,32))]
-
-		left_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 48, 16, 16)),(32,32))]
-
-		right_animations = [pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
-
-		down_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
-
-		up_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
-
-		left_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
-
-		right_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
-		
-		
+	def animate(self):	
 		if self.facing == "down":
 			if self.y_change == 0 and self.attack == False:
 				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
 			elif self.attack == True:
-				self.image = down_attack
+				self.image = self.down_attack
 			else:
-				self.image = down_animations[math.floor(self.animation_loop)]
+				self.image = self.down_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
 				self.animation_loop += 0.1
 				if self.animation_loop >= 4:
@@ -148,9 +163,9 @@ class Player(pygame.sprite.Sprite):
 			if self.y_change == 0 and self.attack == False:
 				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
 			elif self.attack == True:
-				self.image = up_attack
+				self.image = self.up_attack
 			else:
-				self.image = up_animations[math.floor(self.animation_loop)]
+				self.image = self.up_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
 				self.animation_loop += 0.1
 				if self.animation_loop >= 4:
@@ -160,9 +175,9 @@ class Player(pygame.sprite.Sprite):
 			if self.x_change == 0 and self.attack == False:
 				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
 			elif self.attack == True:
-				self.image = left_attack
+				self.image = self.left_attack
 			else:
-				self.image = left_animations[math.floor(self.animation_loop)]
+				self.image = self.left_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
 				self.animation_loop += 0.1
 				if self.animation_loop >= 4:
@@ -172,9 +187,9 @@ class Player(pygame.sprite.Sprite):
 			if self.x_change == 0 and self.attack == False:
 				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
 			elif self.attack == True:
-				self.image = right_attack
+				self.image = self.right_attack
 			else:
-				self.image = right_animations[math.floor(self.animation_loop)]
+				self.image = self.right_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
 				self.animation_loop += 0.1
 				if self.animation_loop >= 4:
@@ -206,6 +221,27 @@ class Enemy(pygame.sprite.Sprite):
 		self.rect.x = self.x
 		self.rect.y = self.y
 
+		self.down_animations = [pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 48, 16, 16)),(32,32))]
+
+		self.up_animations = [pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(16, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(16, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(16, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(16, 48, 16, 16)),(32,32))]
+
+		self.left_animations = [pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(32, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(32, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(32, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(32, 48, 16, 16)),(32,32))]
+
+		self.right_animations = [pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
+
+
 	def update(self):
 		self.movement()
 		self.animate()
@@ -230,31 +266,11 @@ class Enemy(pygame.sprite.Sprite):
 				self.facing = 'left'
 	
 	def animate(self):
-		down_animations = [pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 48, 16, 16)),(32,32))]
-
-		up_animations = [pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(16, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(16, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(16, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(16, 48, 16, 16)),(32,32))]
-
-		left_animations = [pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(32, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(32, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(32, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(32, 48, 16, 16)),(32,32))]
-
-		right_animations = [pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
-
 		if self.facing == "down":
 			if self.y_change == 0:
 				self.image = pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
 			else:
-				self.image = down_animations[math.floor(self.animation_loop)]
+				self.image = self.down_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
 				self.animation_loop += 0.1
 				if self.animation_loop >= 4:
@@ -264,7 +280,7 @@ class Enemy(pygame.sprite.Sprite):
 			if self.y_change == 0:
 				self.image = pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
 			else:
-				self.image = up_animations[math.floor(self.animation_loop)]
+				self.image = self.up_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
 				self.animation_loop += 0.1
 				if self.animation_loop >= 4:
@@ -274,7 +290,7 @@ class Enemy(pygame.sprite.Sprite):
 			if self.x_change == 0:
 				self.image = pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
 			else:
-				self.image = left_animations[math.floor(self.animation_loop)]
+				self.image = self.left_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
 				self.animation_loop += 0.1
 				if self.animation_loop >= 4:
@@ -284,7 +300,7 @@ class Enemy(pygame.sprite.Sprite):
 			if self.x_change == 0:
 				self.image = pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
 			else:
-				self.image = right_animations[math.floor(self.animation_loop)]
+				self.image = self.right_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
 				self.animation_loop += 0.1
 				if self.animation_loop >= 4:
@@ -382,6 +398,11 @@ class Attack(pygame.sprite.Sprite):
 		self.rect.x =self.x
 		self.rect.y = self.y
 
+		self.spark_animations = [pygame.transform.scale((self.game.spark_spritesheet.get_sprite(0, 0, 32, 32)),(self.width,self.height)),
+                           pygame.transform.scale((self.game.spark_spritesheet.get_sprite(32, 0, 32, 32)),(self.width,self.height)),
+                           pygame.transform.scale((self.game.spark_spritesheet.get_sprite(64, 0, 32, 32)),(self.width,self.height)),
+						   pygame.transform.scale((self.game.spark_spritesheet.get_sprite(96, 0, 32, 32)),(self.width,self.height))]
+
 	def update(self):
 		self.animate()
 		self.collide()
@@ -391,12 +412,7 @@ class Attack(pygame.sprite.Sprite):
 
 	def animate(self):
 		#direction = self.game.player.facing
-		spark_animations = [pygame.transform.scale((self.game.spark_spritesheet.get_sprite(0, 0, 32, 32)),(self.width,self.height)),
-                           pygame.transform.scale((self.game.spark_spritesheet.get_sprite(32, 0, 32, 32)),(self.width,self.height)),
-                           pygame.transform.scale((self.game.spark_spritesheet.get_sprite(64, 0, 32, 32)),(self.width,self.height)),
-						   pygame.transform.scale((self.game.spark_spritesheet.get_sprite(96, 0, 32, 32)),(self.width,self.height))]
-
-		self.image = spark_animations[math.floor(self.animation_loop)]
+		self.image = self.spark_animations[math.floor(self.animation_loop)]
 		self.animation_loop += 0.25
 		if self.animation_loop >= 4:
 			self.kill()
