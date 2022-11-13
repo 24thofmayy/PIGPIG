@@ -15,6 +15,7 @@ class Game:
 
 		self.character_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/redsamurai.png')
 		self.attack_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/Attack.png')
+		self.spark_spritesheet = Spritesheet('../assets/graphic/particles/spark.png')
 		self.terrain_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetFloor.png")
 		self.object_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetNature.png")
 		self.enemy_spritesheet = Spritesheet('../assets/graphic/test/Octopus2/SpriteSheet.png')
@@ -32,7 +33,7 @@ class Game:
 				if column == "E":
 					Enemy(self, j, i)
 				if column == "P":
-					Player(self, j, i)
+					self.player = Player(self, j, i)
 
 	def new(self):
 		# start new game
@@ -42,7 +43,7 @@ class Game:
 		self.all_sprites = pygame.sprite.LayeredUpdates()
 		self.blocks = pygame.sprite.LayeredUpdates()
 		self.enemies = pygame.sprite.LayeredUpdates()
-		self.attack = pygame.sprite.LayeredUpdates()
+		self.spark = pygame.sprite.LayeredUpdates()
 
 		self.createTilemap()
 
@@ -52,6 +53,17 @@ class Game:
 				if event.type == pygame.QUIT:
 					self.playing = False
 					self.running = False
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_SPACE:
+						if self.player.facing == 'up':
+							Attack(self, self.player.rect.x, self.player.rect.y - TILESIZE)
+						if self.player.facing == 'down':
+							Attack(self, self.player.rect.x, self.player.rect.y + TILESIZE)
+						if self.player.facing == 'left':
+							Attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
+						if self.player.facing == 'right':
+							Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
+
 
 	def update(self):
 		# game loop update

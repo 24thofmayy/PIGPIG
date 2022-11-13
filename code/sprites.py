@@ -365,14 +365,18 @@ class Attack(pygame.sprite.Sprite):
 	def __init__(self, game, x, y):
 
 		self.game = game
+		self._layer = PLAYER_LAYER
+		self.groups = self.game.all_sprites, self.game.spark
+		pygame.sprite.Sprite.__init__(self, self.groups)
+
 		self.x = x
 		self.y = y
-		self.width = TILESIZE
-		self.height = TILESIZE
+		self.width = 48
+		self.height = 48
 
 		self.animation_loop =  0
 
-		self.image = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+		self.image = pygame.transform.scale((self.game.spark_spritesheet.get_sprite(0, 0, 32, 32)),(self.width,self.height))
 
 		self.rect = self.image.get_rect()
 		self.rect.x =self.x
@@ -386,5 +390,13 @@ class Attack(pygame.sprite.Sprite):
 		hits = pygame.sprite.spritecollide(self, self.game.enemies, True)
 
 	def animate(self):
-		direction = self.game.player.facing
+		#direction = self.game.player.facing
+		spark_animations = [pygame.transform.scale((self.game.spark_spritesheet.get_sprite(0, 0, 32, 32)),(self.width,self.height)),
+                           pygame.transform.scale((self.game.spark_spritesheet.get_sprite(32, 0, 32, 32)),(self.width,self.height)),
+                           pygame.transform.scale((self.game.spark_spritesheet.get_sprite(64, 0, 32, 32)),(self.width,self.height)),
+						   pygame.transform.scale((self.game.spark_spritesheet.get_sprite(96, 0, 32, 32)),(self.width,self.height))]
 
+		self.image = spark_animations[math.floor(self.animation_loop)]
+		self.animation_loop += 0.25
+		if self.animation_loop >= 4:
+			self.kill()
