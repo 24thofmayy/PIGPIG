@@ -33,6 +33,7 @@ class Player(pygame.sprite.Sprite):
 
 		self.x_change = 0
 		self.y_change = 0
+		self.attack = False
 
 		self.facing = 'down'
 		self.animation_loop = 1
@@ -57,6 +58,7 @@ class Player(pygame.sprite.Sprite):
 
 		self.x_change = 0
 		self.y_change = 0
+		self.attack = False
 
 	def movement(self):
 		keys = pygame.key.get_pressed()
@@ -72,6 +74,8 @@ class Player(pygame.sprite.Sprite):
 		if keys[pygame.K_s]:
 			self.y_change += PLAYER_SPEED
 			self.facing = 'down'
+		if keys[pygame.K_SPACE]:
+			self.attack = True
 
 	def collide_enemy(self):
 		hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
@@ -118,10 +122,21 @@ class Player(pygame.sprite.Sprite):
                            pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
                            pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
 						   pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
+
+		down_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+
+		up_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
+
+		left_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
+
+		right_attack = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
+		
 		
 		if self.facing == "down":
-			if self.y_change == 0:
+			if self.y_change == 0 and self.attack == False:
 				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+			elif self.attack == True:
+				self.image = down_attack
 			else:
 				self.image = down_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
@@ -130,8 +145,10 @@ class Player(pygame.sprite.Sprite):
 					self.animation_loop = 1
 
 		if self.facing == "up":
-			if self.y_change == 0:
+			if self.y_change == 0 and self.attack == False:
 				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
+			elif self.attack == True:
+				self.image = up_attack
 			else:
 				self.image = up_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
@@ -140,8 +157,10 @@ class Player(pygame.sprite.Sprite):
 					self.animation_loop = 1	
 
 		if self.facing == "left":
-			if self.x_change == 0:
+			if self.x_change == 0 and self.attack == False:
 				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
+			elif self.attack == True:
+				self.image = left_attack
 			else:
 				self.image = left_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
@@ -150,8 +169,10 @@ class Player(pygame.sprite.Sprite):
 					self.animation_loop = 1
 
 		if self.facing == "right":
-			if self.x_change == 0:
+			if self.x_change == 0 and self.attack == False:
 				self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
+			elif self.attack == True:
+				self.image = right_attack
 			else:
 				self.image = right_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
@@ -228,7 +249,7 @@ class Enemy(pygame.sprite.Sprite):
                            pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
                            pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
 						   pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
-		
+
 		if self.facing == "down":
 			if self.y_change == 0:
 				self.image = pygame.transform.scale((self.game.enemy_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
@@ -310,7 +331,7 @@ class Ground(pygame.sprite.Sprite):
 
 class Button:
 	def __init__(self, x, y, width, height, fg, bg, content, fontsize):
-		self.font = pygame.font.Font('../assets/Mario-Kart-DS.ttf', fontsize)
+		self.font = pygame.font.Font('../assets/NormalFont.ttf', fontsize)
 		self.content = content
 
 		self.x = x
@@ -338,3 +359,32 @@ class Button:
 				return True
 			return False
 		return False
+
+class Attack(pygame.sprite.Sprite):
+
+	def __init__(self, game, x, y):
+
+		self.game = game
+		self.x = x
+		self.y = y
+		self.width = TILESIZE
+		self.height = TILESIZE
+
+		self.animation_loop =  0
+
+		self.image = pygame.transform.scale((self.game.attack_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+
+		self.rect = self.image.get_rect()
+		self.rect.x =self.x
+		self.rect.y = self.y
+
+	def update(self):
+		self.animate()
+		self.collide()
+
+	def collide(self):
+		hits = pygame.sprite.spritecollide(self, self.game.enemies, True)
+
+	def animate(self):
+		direction = self.game.player.facing
+

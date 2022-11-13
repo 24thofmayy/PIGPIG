@@ -11,13 +11,15 @@ class Game:
 		self.screen = pygame.display.set_mode((WIDTH,HEIGTH))
 		self.clock = pygame.time.Clock()
 		self.running = True
-		self.font = pygame.font.Font('../assets/Mario-Kart-DS.ttf', 32)
+		self.font = pygame.font.Font('../assets/NormalFont.ttf', 32)
 
 		self.character_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/redsamurai.png')
+		self.attack_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/Attack.png')
 		self.terrain_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetFloor.png")
 		self.object_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetNature.png")
 		self.enemy_spritesheet = Spritesheet('../assets/graphic/test/Octopus2/SpriteSheet.png')
 		self.intro_background = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/menu.png'),(WIDTH,HEIGTH))
+		self.gameover_bg = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/gameover.png'),(WIDTH,HEIGTH))
 
 		pygame.display.set_caption('PIG KILLER')	
 	
@@ -70,16 +72,39 @@ class Game:
 			self.events()
 			self.update()
 			self.draw()
-		self.running = False
 
 	def game_over(self):
-		pass
-	
+		text = self.font.render('GAME OVER', True, WHITE)
+		text_rect = text.get_rect(center=(WIDTH/2,HEIGTH/2))
+
+		restart_button = Button(10, HEIGTH-60, 120, 50 , WHITE, BLACK, 'RESTART', 16)
+
+		for sprite in self.all_sprites:
+			sprite.kill()
+
+		while self.running:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.running = False
+
+			mouse_pos = pygame.mouse.get_pos()
+			mouse_pressed = pygame.mouse.get_pressed()
+
+			if restart_button.is_pressed(mouse_pos, mouse_pressed):
+				self.new()
+				self.main()
+			
+			self.screen.blit(self.gameover_bg, (0,0))
+			self.screen.blit(text, text_rect)
+			self.screen.blit(restart_button.image, restart_button.rect)
+			self.clock.tick(FPS)
+			pygame.display.update()
+
 	def intro_screen(self):
 		intro = True
 
 		title = self.font.render('SQUID KILLER !!', True, WHITE)
-		title_rect = title.get_rect(x=190, y=180)
+		title_rect = title.get_rect(x=170, y=165)
 
 		play_button = Button(260, 280, 100, 30, WHITE,BLACK, 'PLAY', 26)
 		while intro:
