@@ -2,7 +2,7 @@ import pygame, sys
 from level import *
 from sprites import *
 from settings import *
-  
+from support import *
 
 class Game:
 	def __init__(self):  
@@ -11,7 +11,8 @@ class Game:
 		self.screen = pygame.display.set_mode((WIDTH,HEIGTH))
 		self.clock = pygame.time.Clock()
 		self.running = True
-		self.font = pygame.font.Font('../assets/NormalFont.ttf', 32)
+		self.title_font = pygame.font.Font('../assets/NormalFont.ttf', 32)
+		self.small_font = pygame.font.Font('../assets/NormalFont.ttf', 16)
 
 		self.character_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/redsamurai.png')
 		self.attack_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/Attack.png')
@@ -25,15 +26,25 @@ class Game:
 		pygame.display.set_caption('PIG KILLER')	
 	
 	def createTilemap(self):
-		for i, row in enumerate(tilemap):
-			for j, column in enumerate(row):
-				Ground(self, j, i)
-				if column == "B":
-					Block(self, j, i)
-				if column == "E":
-					Enemy(self, j, i)
-				if column == "P":
-					self.player = Player(self, j, i)
+		Ground(self, -6, -7)
+		#self.player = Player(self, 10, 7)
+
+		layouts = {
+			'object' : import_csv_layout('../map/final2_object.csv'),
+			'Player' : import_csv_layout('../map/final2_player.csv'),
+			'Pig' : import_csv_layout('../map/final2_pig.csv'),
+			'border' :import_csv_layout('../map/final2_border.csv')
+		}
+		for stlye,layout in layouts.items(): 
+			for i, row in enumerate(layout):
+				for j, column in enumerate(row):
+					if column != "-1":
+						if stlye == "Pig":
+							Enemy(self, j-6, i-7)
+						elif stlye == "Player":
+							self.player = Player(self, j-6, i-7)
+						elif stlye == "border" or  stlye == "object":
+							Block(self, j-6, i-7)
 
 	def new(self):
 		# start new game
@@ -86,7 +97,7 @@ class Game:
 			self.draw()
 
 	def game_over(self):
-		text = self.font.render('GAME OVER', True, WHITE)
+		text = self.title_font.render('GAME OVER', True, WHITE)
 		text_rect = text.get_rect(center=(WIDTH/2,HEIGTH/2))
 
 		restart_button = Button(10, HEIGTH-60, 120, 50 , WHITE, BLACK, 'RESTART', 16)
@@ -113,30 +124,39 @@ class Game:
 			pygame.display.update()
 
 	def intro_screen(self):
-		intro = True
+		self.intro = True
 
-		title = self.font.render('SQUID KILLER !!', True, WHITE)
-		title_rect = title.get_rect(x=170, y=165)
+		title = self.title_font.render('SQUID    KILLER !!', True, WHITE)
+		title_rect = title.get_rect(x=160, y=165)
+
+		name = self.small_font.render('65010727  patthanan     chualam', True, WHITE)
+		name_rect = name.get_rect(x=180, y=240)
 
 		play_button = Button(260, 280, 100, 30, WHITE,BLACK, 'PLAY', 26)
-		while intro:
+		high_score_button = Button(210, 320, 200, 30 , WHITE, BLACK, 'HIGH SCORE', 26)
+
+		while self.intro:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
-					intro = False
+					self.intro = False
 					self.running = False
 
 			mouse_pos = pygame.mouse.get_pos()
 			mouse_pressed = pygame.mouse.get_pressed()
 
 			if play_button.is_pressed(mouse_pos,mouse_pressed):
-				intro = False
+				self.intro = False
+
 
 			self.screen.blit(self.intro_background, (0,0))
 			self.screen.blit(title, title_rect)
+			self.screen.blit(name, name_rect)
 			self.screen.blit(play_button.image, play_button.rect)
+			self.screen.blit(high_score_button.image, high_score_button.rect)
+			
 			self.clock.tick(FPS)
 			pygame.display.update()
-
+	
 g = Game()
 g.intro_screen()
 g.new()

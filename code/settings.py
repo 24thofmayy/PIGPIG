@@ -1,7 +1,11 @@
 import pygame
+
 # game setup
 verical_tile_number = 120
 TILESIZE = 32
+
+TILE_WIDTH = 20
+TILE_HEIGTH = 15
 
 WIDTH    = 640
 HEIGTH   = 480

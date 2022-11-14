@@ -319,13 +319,16 @@ class Block(pygame.sprite.Sprite):
 		self.width = TILESIZE
 		self.height = TILESIZE
 
-		self.image = self.game.object_spritesheet.get_sprite(32, 0, 32, 32)
+		self.image = pygame.Surface((self.width,self.height))
+		self.image.set_alpha(0)
+		self.image.fill((255,255,255))
 		self.image = pygame.transform.scale((self.image),(32,32))
 
 		self.rect = self.image.get_rect()
 		self.rect.x = self.x
 		self.rect.y = self.y
 
+		self.image.blit(self.image,(0,0))
 class Ground(pygame.sprite.Sprite):
 	def __init__(self, game, x, y):
 		self.game = game
@@ -338,8 +341,8 @@ class Ground(pygame.sprite.Sprite):
 		self.width = TILESIZE
 		self.height = TILESIZE
 
-		self.image = self.game.terrain_spritesheet.get_sprite(32, 176, self.width, self.height)
-		self.image = pygame.transform.scale((self.image),(32,32))
+		self.image = pygame.image.load('../assets/graphic/map/floor.png')
+		self.image = pygame.transform.scale((self.image),(60*32,60*32))
 
 		self.rect = self.image.get_rect()
 		self.rect.x = self.x
