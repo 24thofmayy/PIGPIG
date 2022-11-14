@@ -23,7 +23,7 @@ class Player(pygame.sprite.Sprite):
 		self._layer = PLAYER_LAYER
 
 		# adding the player into all_sprites group 
-		self.groups = self.game.all_sprites
+		self.groups = self.game.all_sprites 
 		pygame.sprite.Sprite.__init__(self, self.groups)
 
 		self.x = x * TILESIZE
@@ -77,7 +77,7 @@ class Player(pygame.sprite.Sprite):
 	def update(self):
 		self.movement()
 		self.animate()
-		self.collide_enemy()
+		#self.collide_enemy()
 
 		self.rect.x += self.x_change
 		self.collide_blocks('x')
@@ -110,15 +110,11 @@ class Player(pygame.sprite.Sprite):
 				sprite.rect.y -= PLAYER_SPEED
 			self.y_change += PLAYER_SPEED
 			self.facing = 'down'
-		if keys[pygame.K_SPACE]:
+		if keys[pygame.K_SPACE] and not self.attack:
 			self.attack = True
+			print('attack')
 
-	def collide_enemy(self):
-		hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
-		if hits:
-			self.kill()
-			self.game.playing = False
-
+	
 	def collide_blocks(self, direction):
 		if direction == "x":
 			# check if the sprite ซ้อนกัน
@@ -132,7 +128,6 @@ class Player(pygame.sprite.Sprite):
 					self.rect.x = hits[0].rect.right
 					for sprite in self.game.all_sprites:
 						sprite.rect.x -= PLAYER_SPEED
-
 		if direction == "y":
 			hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
 			if hits:
@@ -145,7 +140,6 @@ class Player(pygame.sprite.Sprite):
 					self.rect.y = hits[0].rect.bottom
 					for sprite in self.game.all_sprites:
 						sprite.rect.y -= PLAYER_SPEED
-
 	def animate(self):	
 		if self.facing == "down":
 			if self.y_change == 0 and self.attack == False:
@@ -409,9 +403,12 @@ class Attack(pygame.sprite.Sprite):
 	def update(self):
 		self.animate()
 		self.collide()
+		#print(self.game.score)
 
 	def collide(self):
 		hits = pygame.sprite.spritecollide(self, self.game.enemies, True)
+		if hits:
+			self.game.score += 100
 
 	def animate(self):
 		#direction = self.game.player.facing
@@ -419,3 +416,4 @@ class Attack(pygame.sprite.Sprite):
 		self.animation_loop += 0.25
 		if self.animation_loop >= 4:
 			self.kill()
+

@@ -12,7 +12,7 @@ class Game:
 		self.clock = pygame.time.Clock()
 		self.running = True
 		self.title_font = pygame.font.Font('../assets/NormalFont.ttf', 32)
-		self.small_font = pygame.font.Font('../assets/NormalFont.ttf', 16)
+		self.small_font = pygame.font.Font('../assets/NormalFont.ttf', 18)
 
 		self.character_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/redsamurai.png')
 		self.attack_spritesheet = Spritesheet('../assets/graphic/test/RedSamurai/Attack.png')
@@ -23,6 +23,7 @@ class Game:
 		self.intro_background = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/menu.png'),(WIDTH,HEIGTH))
 		self.gameover_bg = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/gameover.png'),(WIDTH,HEIGTH))
 
+		self.score = 0
 		pygame.display.set_caption('SQUID GAME')	
 	
 	def createTilemap(self):
@@ -80,11 +81,16 @@ class Game:
 		# game loop update
 		# find the update method in every sprites in that group and run it
 		self.all_sprites.update()
-	
+		
 	def draw(self):
-		self.screen.fill(BLACK)
+		self.screen.fill(BLUE)
 		#draw all sprites in the group onto the screen
 		self.all_sprites.draw(self.screen)
+		score = self.small_font.render('SCORE : '+ str(self.score), True, WHITE)
+		score_rect = score.get_rect(x=5, y=0)
+
+		self.screen.blit(score, score_rect)
+
 		# FPS = frames per sec (how many time to update the screen per sec )
 		self.clock.tick(FPS)
 		pygame.display.update()

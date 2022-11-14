@@ -1,1 +1,1 @@
-Player
+self.all_sprites
