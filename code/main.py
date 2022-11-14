@@ -8,7 +8,7 @@ class Game:
 	def __init__(self):  
 		# general setup
 		pygame.init()
-		self.screen = pygame.display.set_mode((WIDTH,HEIGTH))
+		self.screen = pygame.display.set_mode((WIDTH,HEIGTH)) 
 		self.clock = pygame.time.Clock()
 		self.running = True
 		self.title_font = pygame.font.Font('../assets/NormalFont.ttf', 32)
@@ -20,6 +20,7 @@ class Game:
 		self.terrain_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetFloor.png")
 		self.object_spritesheet = Spritesheet("../assets/graphic/Backgrounds/Tilesets/TilesetNature.png")
 		self.enemy_spritesheet = Spritesheet('../assets/graphic/test/Octopus2/SpriteSheet.png')
+		self.monster_spritesheet = Spritesheet('../assets/graphic/test/MaskFrog/SpriteSheet.png')
 		self.intro_background = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/menu.png'),(WIDTH,HEIGTH))
 		self.gameover_bg = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/gameover.png'),(WIDTH,HEIGTH))
 
@@ -34,7 +35,8 @@ class Game:
 			'object' : import_csv_layout('../map/final2_object.csv'),
 			'Player' : import_csv_layout('../map/final2_player.csv'),
 			'Pig' : import_csv_layout('../map/final2_pig.csv'),
-			'border' :import_csv_layout('../map/final2_border.csv')
+			'border' :import_csv_layout('../map/final2_border.csv'),
+			'monster' :import_csv_layout('../map/final2_monster.csv')
 		}
 		for stlye,layout in layouts.items(): 
 			for i, row in enumerate(layout):
@@ -42,8 +44,12 @@ class Game:
 					if column != "-1":
 						if stlye == "Pig":
 							Enemy(self, j-6, i-7)
+						elif stlye == 'monster':
+							Monster(self, j-6, i-7)
 						elif stlye == "Player":
 							self.player = Player(self, j-6, i-7)
+							self.position_playerx = j-6
+							self.position_playery = i-7
 						elif stlye == "border" or  stlye == "object":
 							Block(self, j-6, i-7)
 
@@ -55,6 +61,7 @@ class Game:
 		self.all_sprites = pygame.sprite.LayeredUpdates()
 		self.blocks = pygame.sprite.LayeredUpdates()
 		self.enemies = pygame.sprite.LayeredUpdates()
+		self.monster = pygame.sprite.LayeredUpdates()
 		self.spark = pygame.sprite.LayeredUpdates()
 
 		self.createTilemap()

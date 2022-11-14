@@ -1,1 +1,1 @@
-self.all_sprites
+position_playerx

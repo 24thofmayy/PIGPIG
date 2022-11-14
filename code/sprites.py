@@ -110,9 +110,8 @@ class Player(pygame.sprite.Sprite):
 				sprite.rect.y -= PLAYER_SPEED
 			self.y_change += PLAYER_SPEED
 			self.facing = 'down'
-		if keys[pygame.K_SPACE] and not self.attack:
+		if keys[pygame.K_SPACE] and self.attack == False:
 			self.attack = True
-			print('attack')
 
 	
 	def collide_blocks(self, direction):
@@ -188,6 +187,121 @@ class Player(pygame.sprite.Sprite):
 				self.animation_loop += 0.1
 				if self.animation_loop >= 4:
 					self.animation_loop = 1	
+
+class Monster(pygame.sprite.Sprite):
+	def __init__(self, game, x, y):
+		
+		self.game = game
+		self._layer = ENEMY_LAYER
+		self.groups = self.game.all_sprites, self.game.monster
+		pygame.sprite.Sprite.__init__(self, self.groups)
+
+		self.x = x * TILESIZE
+		self.y = y * TILESIZE
+		self.width = TILESIZE
+		self.height = TILESIZE
+		
+		self.x_change = 0
+		self.y_change = 0
+		self.facing = random.choice(['left','right','up','down'])
+		self.animation_loop = 1
+		self.movement_loop = 0
+		self.max_travel = random.randint(7, 30)
+
+		self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+		self.image.set_colorkey(BLACK)
+
+		self.rect = self.image.get_rect()
+		self.rect.x = self.x
+		self.rect.y = self.y
+
+		self.down_animations = [pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 48, 16, 16)),(32,32))]
+
+		self.up_animations = [pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 48, 16, 16)),(32,32))]
+
+		self.left_animations = [pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 48, 16, 16)),(32,32))]
+
+		self.right_animations = [pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
+
+
+	def update(self):
+		self.movement()
+		self.animate()
+
+		self.rect.x += self.x_change
+		self.rect.y += self.y_change
+
+		self.x_change = 0
+		self.y_change = 0
+
+	def movement(self):
+		if self.rect.x > self.game.player.rect.x:
+			self.rect.x -= 1
+			self.facing == 'left'
+		elif self.rect.x < self.game.player.rect.x:
+			self.rect.x += 1
+			self.facing = 'right'
+		if self.rect.y > self.game.player.rect.y:
+			self.rect.y -= 1
+			self.facing = 'up'
+		elif self.rect.y < self.game.player.rect.y:
+			self.rect.y += 1
+			self.facing = 'down'
+
+	
+	def animate(self):
+		if self.facing == "down":
+			if self.y_change == 0:
+				self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+			else:
+				self.image = self.down_animations[math.floor(self.animation_loop)]
+				# change animation every 10 frames
+				self.animation_loop += 0.1
+				if self.animation_loop >= 4:
+					self.animation_loop = 1
+
+		if self.facing == "up":
+			if self.y_change == 0:
+				self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
+			else:
+				self.image = self.up_animations[math.floor(self.animation_loop)]
+				# change animation every 10 frames
+				self.animation_loop += 0.1
+				if self.animation_loop >= 4:
+					self.animation_loop = 1	
+
+		if self.facing == "left":
+			if self.x_change == 0:
+				self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
+			else:
+				self.image = self.left_animations[math.floor(self.animation_loop)]
+				# change animation every 10 frames
+				self.animation_loop += 0.1
+				if self.animation_loop >= 4:
+					self.animation_loop = 1
+
+		if self.facing == "right":
+			if self.x_change == 0:
+				self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
+			else:
+				self.image = self.right_animations[math.floor(self.animation_loop)]
+				# change animation every 10 frames
+				self.animation_loop += 0.1
+				if self.animation_loop >= 4:
+					self.animation_loop = 1
+
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, game, x, y):
 
@@ -403,12 +517,12 @@ class Attack(pygame.sprite.Sprite):
 	def update(self):
 		self.animate()
 		self.collide()
-		#print(self.game.score)
 
 	def collide(self):
-		hits = pygame.sprite.spritecollide(self, self.game.enemies, True)
-		if hits:
-			self.game.score += 100
+
+			hits = pygame.sprite.spritecollide(self, self.game.enemies, True)
+			if hits:
+				self.game.score += 100
 
 	def animate(self):
 		#direction = self.game.player.facing
