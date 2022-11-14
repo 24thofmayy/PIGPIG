@@ -25,6 +25,7 @@ class Game:
 		self.gameover_bg = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/gameover.png'),(WIDTH,HEIGTH))
 
 		self.score = 0
+		self.hp = 100
 		pygame.display.set_caption('SQUID GAME')	
 	
 	def createTilemap(self):
@@ -48,8 +49,6 @@ class Game:
 							Monster(self, j-6, i-7)
 						elif stlye == "Player":
 							self.player = Player(self, j-6, i-7)
-							self.position_playerx = j-6
-							self.position_playery = i-7
 						elif stlye == "border" or  stlye == "object":
 							Block(self, j-6, i-7)
 
@@ -93,10 +92,13 @@ class Game:
 		self.screen.fill(BLUE)
 		#draw all sprites in the group onto the screen
 		self.all_sprites.draw(self.screen)
-		score = self.small_font.render('SCORE : '+ str(self.score), True, WHITE)
+		score = self.small_font.render('SCORE : '+ str(self.score/10), True, BLACK)
 		score_rect = score.get_rect(x=5, y=0)
-
+		
+		hp = self.small_font.render('HP : '+ str(self.hp) + '/1000', True, BLACK)
+		hp_rect = hp.get_rect(x=5, y=20)
 		self.screen.blit(score, score_rect)
+		self.screen.blit(hp, hp_rect)
 
 		# FPS = frames per sec (how many time to update the screen per sec )
 		self.clock.tick(FPS)

@@ -77,7 +77,7 @@ class Player(pygame.sprite.Sprite):
 	def update(self):
 		self.movement()
 		self.animate()
-		#self.collide_enemy()
+		self.collide_monster()
 
 		self.rect.x += self.x_change
 		self.collide_blocks('x')
@@ -139,6 +139,12 @@ class Player(pygame.sprite.Sprite):
 					self.rect.y = hits[0].rect.bottom
 					for sprite in self.game.all_sprites:
 						sprite.rect.y -= PLAYER_SPEED
+
+	def collide_monster(self):
+			hits_monster = pygame.sprite.spritecollide(self, self.game.monster, False)
+			if hits_monster:
+				self.game.hp -= 1
+
 	def animate(self):	
 		if self.facing == "down":
 			if self.y_change == 0 and self.attack == False:
@@ -206,7 +212,7 @@ class Monster(pygame.sprite.Sprite):
 		self.facing = random.choice(['left','right','up','down'])
 		self.animation_loop = 1
 		self.movement_loop = 0
-		self.max_travel = random.randint(7, 30)
+		self.max_travel = random.randint(7, 50)
 
 		self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
 		self.image.set_colorkey(BLACK)
@@ -247,20 +253,30 @@ class Monster(pygame.sprite.Sprite):
 		self.y_change = 0
 
 	def movement(self):
-		if self.rect.x > self.game.player.rect.x:
-			self.rect.x -= 1
-			self.facing == 'left'
-		elif self.rect.x < self.game.player.rect.x:
-			self.rect.x += 1
-			self.facing = 'right'
-		if self.rect.y > self.game.player.rect.y:
-			self.rect.y -= 1
-			self.facing = 'up'
-		elif self.rect.y < self.game.player.rect.y:
-			self.rect.y += 1
-			self.facing = 'down'
-
-	
+		if self.facing == 'left': 
+			self.x_change -= ENEMY_SPEED
+			self.movement_loop -= 1
+			if self.movement_loop <= -self.max_travel:
+				self.facing = 'right'
+		
+		if self.facing == 'right':
+			self.x_change += ENEMY_SPEED
+			self.movement_loop += 1
+			if self.movement_loop >= self.max_travel:
+				self.facing = 'left'
+		
+		if self.facing == 'up': 
+			self.y_change -= ENEMY_SPEED
+			self.movement_loop -= 1
+			if self.movement_loop <= -self.max_travel:
+				self.facing = 'down'
+		
+		if self.facing == 'down':
+			self.y_change += ENEMY_SPEED
+			self.movement_loop += 1
+			if self.movement_loop >= self.max_travel:
+				self.facing = 'up'
+				
 	def animate(self):
 		if self.facing == "down":
 			if self.y_change == 0:
@@ -302,6 +318,24 @@ class Monster(pygame.sprite.Sprite):
 				if self.animation_loop >= 4:
 					self.animation_loop = 1
 
+	def collide_blocks(self, direction):
+		if direction == "x":
+			# check if the sprite ซ้อนกัน
+			hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
+			if hits:
+				if self.x_change > 0:
+					self.rect.x = hits[0].rect.left - self.rect.width
+				if self.x_change < 0:
+					self.rect.x = hits[0].rect.right
+		if direction == "y":
+			hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
+			if hits:
+				if self.y_change > 0:
+					self.rect.y = hits[0].rect.top - self.rect.height
+				
+				if self.y_change < 0:
+					self.rect.y = hits[0].rect.bottom
+		
 class Enemy(pygame.sprite.Sprite):
 	def __init__(self, game, x, y):
 
@@ -519,11 +553,13 @@ class Attack(pygame.sprite.Sprite):
 		self.collide()
 
 	def collide(self):
+			hits_enemy = pygame.sprite.spritecollide(self, self.game.enemies, True)
+			if hits_enemy:
+				self.game.score += 200
 
-			hits = pygame.sprite.spritecollide(self, self.game.enemies, True)
-			if hits:
+			hits_monster = pygame.sprite.spritecollide(self, self.game.monster, True)
+			if hits_monster:
 				self.game.score += 100
-
 	def animate(self):
 		#direction = self.game.player.facing
 		self.image = self.spark_animations[math.floor(self.animation_loop)]
