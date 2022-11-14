@@ -23,7 +23,7 @@ class Game:
 		self.intro_background = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/menu.png'),(WIDTH,HEIGTH))
 		self.gameover_bg = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/gameover.png'),(WIDTH,HEIGTH))
 
-		pygame.display.set_caption('PIG KILLER')	
+		pygame.display.set_caption('SQUID GAME')	
 	
 	def createTilemap(self):
 		Ground(self, -6, -7)
@@ -126,14 +126,14 @@ class Game:
 	def intro_screen(self):
 		self.intro = True
 
-		title = self.title_font.render('SQUID    KILLER !!', True, WHITE)
-		title_rect = title.get_rect(x=160, y=165)
+		title = self.title_font.render('SQUID    GAME', True, WHITE)
+		title_rect = title.get_rect(x=195, y=80)
 
 		name = self.small_font.render('65010727  patthanan     chualam', True, WHITE)
-		name_rect = name.get_rect(x=180, y=240)
+		name_rect = name.get_rect(x=180, y=440)
 
-		play_button = Button(260, 280, 100, 30, WHITE,BLACK, 'PLAY', 26)
-		high_score_button = Button(210, 320, 200, 30 , WHITE, BLACK, 'HIGH SCORE', 26)
+		play_button = Button(260, 190, 100, 30, WHITE,BLACK, 'PLAY', 26)
+		high_score_button = Button(210, 240, 200, 30 , WHITE, BLACK, 'HIGH SCORE', 26)
 
 		while self.intro:
 			for event in pygame.event.get():
@@ -146,6 +146,9 @@ class Game:
 
 			if play_button.is_pressed(mouse_pos,mouse_pressed):
 				self.intro = False
+			if high_score_button.is_pressed(mouse_pos,mouse_pressed):
+				self.intro = False
+				self.high_score()
 
 
 			self.screen.blit(self.intro_background, (0,0))
@@ -156,7 +159,33 @@ class Game:
 			
 			self.clock.tick(FPS)
 			pygame.display.update()
-	
+
+	def high_score(self):
+		self.highscore = True
+		text = self.title_font.render('HIGH SCORE', True, WHITE)
+		text_rect = text.get_rect(center=(WIDTH/2,HEIGTH/2))
+
+		back_button = Button(10, HEIGTH-60, 120, 50 , WHITE, BLACK, 'GO BACK', 26)
+
+		while self.highscore:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.highscore = False
+					self.running = False
+
+			mouse_pos = pygame.mouse.get_pos()
+			mouse_pressed = pygame.mouse.get_pressed()
+
+			if back_button.is_pressed(mouse_pos, mouse_pressed):
+				self.highscore = False
+				self.intro_screen()
+			
+			self.screen.blit(self.gameover_bg, (0,0))
+			self.screen.blit(text, text_rect)
+			self.screen.blit(back_button.image, back_button.rect)
+			self.clock.tick(FPS)
+			pygame.display.update()
+
 g = Game()
 g.intro_screen()
 g.new()
