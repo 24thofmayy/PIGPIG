@@ -27,10 +27,13 @@ class Game:
 
 		self.score = 0
 		self.hp = 1000
+		self.pig = 70
 		pygame.display.set_caption('SQUID GAME')	
 	
 	def createTilemap(self):
 		Ground(self, -6, -7)
+		num = 0
+		num2 = 0
 		#self.player = Player(self, 10, 7)
 
 		layouts = {
@@ -47,8 +50,14 @@ class Game:
 					if column != "-1":
 						if stlye == "Pig":
 							Enemy(self, j-6, i-7)
+							num += 1
+							print('Pig = ' + str(num))
 						elif stlye == 'monster':
 							Monster(self, j-6, i-7)
+							num2 += 1
+							print('Mon = ' + str(num2))
+						elif stlye == 'item':
+							Item(self, j-6, i-7)	
 						elif stlye == "Player":
 							self.player = Player(self, j-6, i-7)
 						elif stlye == "border" or  stlye == "object":
@@ -95,12 +104,18 @@ class Game:
 		#draw all sprites in the group onto the screen
 		self.all_sprites.draw(self.screen)
 		score = self.small_font.render('SCORE : '+ str(self.score), True, BLACK)
-		score_rect = score.get_rect(x=5, y=0)
+		score_rect = score.get_rect(x=5, y=40)
 		
 		hp = self.small_font.render('HP : '+ str(int(self.hp/10)), True, BLACK)
 		hp_rect = hp.get_rect(x=5, y=20)
+
+		squid = self.small_font.render('SQID     LEFT : ' + str(self.pig), True, RED )
+		squid_rect = squid.get_rect(x=5, y=0)
+
 		self.screen.blit(score, score_rect)
 		self.screen.blit(hp, hp_rect)
+		self.screen.blit(squid, squid_rect)
+
 
 		# FPS = frames per sec (how many time to update the screen per sec )
 		self.clock.tick(FPS)
@@ -115,7 +130,13 @@ class Game:
 
 	def game_over(self):
 		text = self.title_font.render('GAME OVER', True, WHITE)
-		text_rect = text.get_rect(center=(WIDTH/2,HEIGTH/2))
+		text_rect = text.get_rect(x=195, y=80)
+
+		score = self.title_font.render('YOUR SCORE IS '+ str(self.score) , True, WHITE)
+		score_rect = score.get_rect(center=(WIDTH/2,HEIGTH/2))
+
+		win = self.title_font.render('! YOUR WIN !', True, WHITE)
+		win_rect = win.get_rect(x=195, y=80)
 
 		restart_button = Button(10, HEIGTH-60, 120, 50 , WHITE, BLACK, 'RESTART', 16)
 
@@ -134,8 +155,12 @@ class Game:
 				self.new()
 				self.main()
 			
-			self.screen.blit(self.gameover_bg, (0,0))
-			self.screen.blit(text, text_rect)
+			if self.hp <= 0:
+				#self.screen.blit(self.gameover_bg, (0,0))
+				self.screen.blit(text, text_rect)
+
+			self.screen.blit(win, win_rect)
+			self.screen.blit(score, score_rect)
 			self.screen.blit(restart_button.image, restart_button.rect)
 			self.clock.tick(FPS)
 			pygame.display.update()

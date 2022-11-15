@@ -78,7 +78,7 @@ class Player(pygame.sprite.Sprite):
 		self.movement()
 		self.animate()
 		self.collide_monster()
-		#self.collide_item()
+		self.collide_item()
 
 		self.rect.x += self.x_change
 		self.collide_blocks('x')
@@ -145,7 +145,7 @@ class Player(pygame.sprite.Sprite):
 			hits_monster = pygame.sprite.spritecollide(self, self.game.monster, False)
 			if hits_monster:
 				self.game.hp -= 4
-				if self.game.hp == 0:
+				if self.game.hp <= 0:
 					self.kill()
 					self.game.playing = False
 	
@@ -603,15 +603,15 @@ class Attack(pygame.sprite.Sprite):
 			hits_enemy = pygame.sprite.spritecollide(self, self.game.enemies, True)
 			if hits_enemy:
 				self.game.score += 200
-				print('item')
-				Item(self.game,self.rect.x+1,self.rect.y+1)
+				self.game.pig -= 1
+
+			if self.game.pig <= 60:
+					self.kill()
+					self.game.playing = False
 
 			hits_monster = pygame.sprite.spritecollide(self, self.game.monster, True)
 			if hits_monster:
 				self.game.score += 100
-				print('item')
-				Item(self.game,self.rect.x,self.rect.y)
-
 			
 	def animate(self):
 		#direction = self.game.player.facing
