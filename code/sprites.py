@@ -91,6 +91,7 @@ class Player(pygame.sprite.Sprite):
 
 	def movement(self):
 		keys = pygame.key.get_pressed()
+		mouse = pygame.mouse.get_pressed()
 		if keys[pygame.K_a]:
 			for sprite in self.game.all_sprites:
 				sprite.rect.x += PLAYER_SPEED
@@ -603,9 +604,9 @@ class Attack(pygame.sprite.Sprite):
 			hits_enemy = pygame.sprite.spritecollide(self, self.game.enemies, True)
 			if hits_enemy:
 				self.game.score += 200
-				self.game.pig -= 1
+				self.game.pig += 1
 
-			if self.game.pig <= 60:
+			if self.game.pig >= 30:
 					self.kill()
 					self.game.playing = False
 

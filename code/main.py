@@ -25,9 +25,6 @@ class Game:
 		self.gameover_bg = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/gameover.png'),(WIDTH,HEIGTH))
 		self.heart_pic = pygame.image.load('../assets/graphic/particles/fruit_01a.png')
 
-		self.score = 0
-		self.hp = 1000
-		self.pig = 70
 		pygame.display.set_caption('SQUID GAME')	
 	
 	def createTilemap(self):
@@ -66,6 +63,9 @@ class Game:
 	def new(self):
 		# start new game
 		self.playing = True
+		self.score = 0
+		self.hp = 1000
+		self.pig = 0
 
 		# contain all sprites in game
 		self.all_sprites = pygame.sprite.LayeredUpdates()
@@ -109,7 +109,7 @@ class Game:
 		hp = self.small_font.render('HP : '+ str(int(self.hp/10)), True, BLACK)
 		hp_rect = hp.get_rect(x=5, y=20)
 
-		squid = self.small_font.render('SQID     LEFT : ' + str(self.pig), True, RED )
+		squid = self.small_font.render('SQUID     KILLED : ' + str(self.pig)+ '/30', True, RED )
 		squid_rect = squid.get_rect(x=5, y=0)
 
 		self.screen.blit(score, score_rect)
@@ -135,7 +135,7 @@ class Game:
 		score = self.title_font.render('YOUR SCORE IS '+ str(self.score) , True, WHITE)
 		score_rect = score.get_rect(center=(WIDTH/2,HEIGTH/2))
 
-		win = self.title_font.render('! YOUR WIN !', True, WHITE)
+		win = self.title_font.render('! YOU WIN !', True, WHITE)
 		win_rect = win.get_rect(x=195, y=80)
 
 		restart_button = Button(10, HEIGTH-60, 120, 50 , WHITE, BLACK, 'RESTART', 16)
@@ -159,8 +159,9 @@ class Game:
 				#self.screen.blit(self.gameover_bg, (0,0))
 				self.screen.blit(text, text_rect)
 
-			self.screen.blit(win, win_rect)
-			self.screen.blit(score, score_rect)
+			elif self.pig >= 30:
+				self.screen.blit(win, win_rect)
+				self.screen.blit(score, score_rect)
 			self.screen.blit(restart_button.image, restart_button.rect)
 			self.clock.tick(FPS)
 			pygame.display.update()

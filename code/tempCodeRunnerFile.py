@@ -1,2 +1,1 @@
-
-				for j, column in enumerate(row):
+K_SPACE
