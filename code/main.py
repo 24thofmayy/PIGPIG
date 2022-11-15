@@ -23,9 +23,10 @@ class Game:
 		self.monster_spritesheet = Spritesheet('../assets/graphic/test/MaskFrog/SpriteSheet.png')
 		self.intro_background = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/menu.png'),(WIDTH,HEIGTH))
 		self.gameover_bg = pygame.transform.scale(pygame.image.load('../assets/graphic/Backgrounds/gameover.png'),(WIDTH,HEIGTH))
+		self.heart_pic = pygame.image.load('../assets/graphic/particles/fruit_01a.png')
 
 		self.score = 0
-		self.hp = 100
+		self.hp = 1000
 		pygame.display.set_caption('SQUID GAME')	
 	
 	def createTilemap(self):
@@ -37,7 +38,8 @@ class Game:
 			'Player' : import_csv_layout('../map/final2_player.csv'),
 			'Pig' : import_csv_layout('../map/final2_pig.csv'),
 			'border' :import_csv_layout('../map/final2_border.csv'),
-			'monster' :import_csv_layout('../map/final2_monster.csv')
+			'monster' :import_csv_layout('../map/final2_monster.csv'),
+			'item' :import_csv_layout('../map/final2_item.csv')
 		}
 		for stlye,layout in layouts.items(): 
 			for i, row in enumerate(layout):
@@ -62,7 +64,7 @@ class Game:
 		self.enemies = pygame.sprite.LayeredUpdates()
 		self.monster = pygame.sprite.LayeredUpdates()
 		self.spark = pygame.sprite.LayeredUpdates()
-
+		self.item = pygame.sprite.LayeredUpdates() 
 		self.createTilemap()
 
 	def events(self):
@@ -92,10 +94,10 @@ class Game:
 		self.screen.fill(BLUE)
 		#draw all sprites in the group onto the screen
 		self.all_sprites.draw(self.screen)
-		score = self.small_font.render('SCORE : '+ str(self.score/10), True, BLACK)
+		score = self.small_font.render('SCORE : '+ str(self.score), True, BLACK)
 		score_rect = score.get_rect(x=5, y=0)
 		
-		hp = self.small_font.render('HP : '+ str(self.hp) + '/1000', True, BLACK)
+		hp = self.small_font.render('HP : '+ str(int(self.hp/10)), True, BLACK)
 		hp_rect = hp.get_rect(x=5, y=20)
 		self.screen.blit(score, score_rect)
 		self.screen.blit(hp, hp_rect)
@@ -147,8 +149,8 @@ class Game:
 		name = self.small_font.render('65010727  patthanan     chualam', True, WHITE)
 		name_rect = name.get_rect(x=180, y=440)
 
-		play_button = Button(260, 190, 100, 30, WHITE,BLACK, 'PLAY', 26)
-		high_score_button = Button(210, 240, 200, 30 , WHITE, BLACK, 'HIGH SCORE', 26)
+		play_button = Button(260, 230, 100, 30, WHITE,BLACK, 'PLAY', 26)
+		high_score_button = Button(210, 290, 200, 30 , WHITE, BLACK, 'HIGH SCORE', 26)
 
 		while self.intro:
 			for event in pygame.event.get():

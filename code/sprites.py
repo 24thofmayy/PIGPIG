@@ -1,6 +1,6 @@
 import pygame
 from settings import *
-import math 
+import math 	 
 import random
 
 # by pasting 'game' here we'll be able to access all the variable in 'Game'
@@ -23,7 +23,7 @@ class Player(pygame.sprite.Sprite):
 		self._layer = PLAYER_LAYER
 
 		# adding the player into all_sprites group 
-		self.groups = self.game.all_sprites 
+		self.groups = self.game.all_sprites
 		pygame.sprite.Sprite.__init__(self, self.groups)
 
 		self.x = x * TILESIZE
@@ -78,6 +78,7 @@ class Player(pygame.sprite.Sprite):
 		self.movement()
 		self.animate()
 		self.collide_monster()
+		#self.collide_item()
 
 		self.rect.x += self.x_change
 		self.collide_blocks('x')
@@ -143,7 +144,17 @@ class Player(pygame.sprite.Sprite):
 	def collide_monster(self):
 			hits_monster = pygame.sprite.spritecollide(self, self.game.monster, False)
 			if hits_monster:
-				self.game.hp -= 1
+				self.game.hp -= 4
+				if self.game.hp == 0:
+					self.kill()
+					self.game.playing = False
+	
+	def collide_item(self):
+			hits = pygame.sprite.spritecollide(self, self.game.item, True)
+			if hits:
+				self.game.hp += 100
+
+
 
 	def animate(self):	
 		if self.facing == "down":
@@ -253,29 +264,42 @@ class Monster(pygame.sprite.Sprite):
 		self.y_change = 0
 
 	def movement(self):
-		if self.facing == 'left': 
-			self.x_change -= ENEMY_SPEED
-			self.movement_loop -= 1
-			if self.movement_loop <= -self.max_travel:
-				self.facing = 'right'
-		
-		if self.facing == 'right':
-			self.x_change += ENEMY_SPEED
-			self.movement_loop += 1
-			if self.movement_loop >= self.max_travel:
-				self.facing = 'left'
-		
-		if self.facing == 'up': 
-			self.y_change -= ENEMY_SPEED
-			self.movement_loop -= 1
-			if self.movement_loop <= -self.max_travel:
-				self.facing = 'down'
-		
-		if self.facing == 'down':
-			self.y_change += ENEMY_SPEED
-			self.movement_loop += 1
-			if self.movement_loop >= self.max_travel:
-				self.facing = 'up'
+		# d = math.sqrt((int(self.rect.x) - int(self.game.player.rect.x))**2 - (int(self.rect.y) - int(self.game.player.rect.y))**2)
+		d = math.sqrt((self.rect.x-self.game.player.rect.x)**2 + (self.rect.y-self.game.player.rect.y)**2)
+		if d <= 150:
+			if self.rect.x > self.game.player.rect.x:
+				self.rect.x -= MONSTER_SPEED
+			elif self.rect.x < self.game.player.rect.x:
+				self.rect.x += MONSTER_SPEED
+			if self.rect.y > self.game.player.rect.y:
+				self.rect.y -= MONSTER_SPEED
+			elif self.rect.y < self.game.player.rect.y:
+				self.rect.y += MONSTER_SPEED
+
+		else:
+			if self.facing == 'left': 
+				self.x_change -= MONSTER_SPEED
+				self.movement_loop -= 1
+				if self.movement_loop <= -self.max_travel:
+					self.facing = 'right'
+			
+			elif self.facing == 'right':
+				self.x_change += MONSTER_SPEED
+				self.movement_loop += 1
+				if self.movement_loop >= self.max_travel:
+					self.facing = 'left'
+			
+			elif self.facing == 'up': 
+				self.y_change -= MONSTER_SPEED
+				self.movement_loop -= 1
+				if self.movement_loop <= -self.max_travel:
+					self.facing = 'down'
+			
+			if self.facing == 'down':
+				self.y_change += MONSTER_SPEED
+				self.movement_loop += 1
+				if self.movement_loop >= self.max_travel:
+					self.facing = 'up'
 				
 	def animate(self):
 		if self.facing == "down":
@@ -448,6 +472,29 @@ class Enemy(pygame.sprite.Sprite):
 				if self.animation_loop >= 4:
 					self.animation_loop = 1	
 
+class Item(pygame.sprite.Sprite):
+	def __init__(self, game, x, y):
+		self.game = game
+		self._layer = PLAYER_LAYER
+		self.groups = self.game.all_sprites, self.game.item
+		pygame.sprite.Sprite.__init__(self, self.groups)
+
+		self.x = x * TILESIZE
+		self.y = y * TILESIZE
+		self.width = TILESIZE
+		self.height = TILESIZE
+
+		self.image = self.game.heart_pic
+		self.image = pygame.transform.scale((self.image),(32,32))
+
+		self.rect = self.image.get_rect()
+		self.rect.x = self.x
+		self.rect.y = self.y
+
+		sprite = pygame.Surface([self.width, self.height])
+		sprite.blit(self.image, self.rect)
+		sprite.set_colorkey(BLACK)
+
 class Block(pygame.sprite.Sprite):
 	def __init__(self, game, x, y):
 		
@@ -484,7 +531,7 @@ class Ground(pygame.sprite.Sprite):
 		self.height = TILESIZE
 
 		self.image = pygame.image.load('../assets/graphic/map/floor.png')
-		self.image = pygame.transform.scale((self.image),(60*32,60*32))
+		self.image = pygame.transform.scale((self.image),(100*32,100*32))
 
 		self.rect = self.image.get_rect()
 		self.rect.x = self.x
@@ -532,8 +579,8 @@ class Attack(pygame.sprite.Sprite):
 
 		self.x = x
 		self.y = y
-		self.width = 48
-		self.height = 48
+		self.width = 32
+		self.height = 32
 
 		self.animation_loop =  0
 
@@ -556,10 +603,16 @@ class Attack(pygame.sprite.Sprite):
 			hits_enemy = pygame.sprite.spritecollide(self, self.game.enemies, True)
 			if hits_enemy:
 				self.game.score += 200
+				print('item')
+				Item(self.game,self.rect.x+1,self.rect.y+1)
 
 			hits_monster = pygame.sprite.spritecollide(self, self.game.monster, True)
 			if hits_monster:
 				self.game.score += 100
+				print('item')
+				Item(self.game,self.rect.x,self.rect.y)
+
+			
 	def animate(self):
 		#direction = self.game.player.facing
 		self.image = self.spark_animations[math.floor(self.animation_loop)]
