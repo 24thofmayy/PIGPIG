@@ -39,6 +39,8 @@ class Player(pygame.sprite.Sprite):
 		self.animation_loop = 1
 
 		self.image = pygame.transform.scale((self.game.character_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+		self.item = pygame.mixer.Sound("../assets/sound/item.mp3")
+		self.item.set_volume(2)
 		
 
 		# rect is where the image in sprites positioned and sized 
@@ -154,6 +156,7 @@ class Player(pygame.sprite.Sprite):
 			hits = pygame.sprite.spritecollide(self, self.game.item, True)
 			if hits:
 				self.game.hp += 100
+				pygame.mixer.Sound.play(self.item)
 
 
 
@@ -578,6 +581,11 @@ class Attack(pygame.sprite.Sprite):
 		self.groups = self.game.all_sprites, self.game.spark
 		pygame.sprite.Sprite.__init__(self, self.groups)
 
+		self.killpig = pygame.mixer.Sound("../assets/sound/pig.mp3")
+		self.killpig.set_volume(2)
+		self.killmon = pygame.mixer.Sound("../assets/sound/punch.mp3")
+		self.killmon.set_volume(2)
+
 		self.x = x
 		self.y = y
 		self.width = 32
@@ -605,14 +613,16 @@ class Attack(pygame.sprite.Sprite):
 			if hits_enemy:
 				self.game.score += 200
 				self.game.pig += 1
+				pygame.mixer.Sound.play(self.killpig)
 
-			if self.game.pig >= 30:
+			if self.game.pig >= 3:
 					self.kill()
 					self.game.playing = False
 
 			hits_monster = pygame.sprite.spritecollide(self, self.game.monster, True)
 			if hits_monster:
 				self.game.score += 100
+				pygame.mixer.Sound.play(self.killmon)
 			
 	def animate(self):
 		#direction = self.game.player.facing

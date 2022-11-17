@@ -1,1 +1,1 @@
-K_SPACE
+self.drawname =False
