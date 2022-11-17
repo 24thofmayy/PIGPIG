@@ -1,1 +1,1 @@
-self.drawname =False
+user_rect

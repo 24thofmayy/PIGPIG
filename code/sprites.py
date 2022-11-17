@@ -151,6 +151,7 @@ class Player(pygame.sprite.Sprite):
 				if self.game.hp <= 0:
 					self.kill()
 					self.game.playing = False
+					self.game.game_over()
 	
 	def collide_item(self):
 			hits = pygame.sprite.spritecollide(self, self.game.item, True)
@@ -229,32 +230,38 @@ class Monster(pygame.sprite.Sprite):
 		self.movement_loop = 0
 		self.max_travel = random.randint(7, 50)
 
-		self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+		self.select = random.randint(1,2)
+		if self.select == 1:
+			self.monster_spritesheet = Spritesheet('../assets/graphic/test/MaskFrog/SpriteSheet.png')
+			
+		else:
+			self.monster_spritesheet = Spritesheet('../assets/graphic/test/MaskFrog/SpriteSheet2.png')
+		self.image = pygame.transform.scale((self.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
 		self.image.set_colorkey(BLACK)
 
 		self.rect = self.image.get_rect()
 		self.rect.x = self.x
 		self.rect.y = self.y
 
-		self.down_animations = [pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 48, 16, 16)),(32,32))]
+		self.down_animations = [pygame.transform.scale((self.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.monster_spritesheet.get_sprite(0, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.monster_spritesheet.get_sprite(0, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.monster_spritesheet.get_sprite(0, 48, 16, 16)),(32,32))]
 
-		self.up_animations = [pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 48, 16, 16)),(32,32))]
+		self.up_animations = [pygame.transform.scale((self.monster_spritesheet.get_sprite(16, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.monster_spritesheet.get_sprite(16, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.monster_spritesheet.get_sprite(16, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.monster_spritesheet.get_sprite(16, 48, 16, 16)),(32,32))]
 
-		self.left_animations = [pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 48, 16, 16)),(32,32))]
+		self.left_animations = [pygame.transform.scale((self.monster_spritesheet.get_sprite(32, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.monster_spritesheet.get_sprite(32, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.monster_spritesheet.get_sprite(32, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.monster_spritesheet.get_sprite(32, 48, 16, 16)),(32,32))]
 
-		self.right_animations = [pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 0, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
-                           pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
-						   pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
+		self.right_animations = [pygame.transform.scale((self.monster_spritesheet.get_sprite(48, 0, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.monster_spritesheet.get_sprite(48, 16, 16, 16)),(32,32)),
+                           pygame.transform.scale((self.monster_spritesheet.get_sprite(48, 32, 16, 16)),(32,32)),
+						   pygame.transform.scale((self.monster_spritesheet.get_sprite(48, 48, 16, 16)),(32,32))]
 
 
 	def update(self):
@@ -308,7 +315,7 @@ class Monster(pygame.sprite.Sprite):
 	def animate(self):
 		if self.facing == "down":
 			if self.y_change == 0:
-				self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
+				self.image = pygame.transform.scale((self.monster_spritesheet.get_sprite(0, 0, 16, 16)),(32,32))
 			else:
 				self.image = self.down_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
@@ -318,7 +325,7 @@ class Monster(pygame.sprite.Sprite):
 
 		if self.facing == "up":
 			if self.y_change == 0:
-				self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
+				self.image = pygame.transform.scale((self.monster_spritesheet.get_sprite(16, 0, 16, 16)),(32,32))
 			else:
 				self.image = self.up_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
@@ -328,7 +335,7 @@ class Monster(pygame.sprite.Sprite):
 
 		if self.facing == "left":
 			if self.x_change == 0:
-				self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
+				self.image = pygame.transform.scale((self.monster_spritesheet.get_sprite(32, 0, 16, 16)),(32,32))
 			else:
 				self.image = self.left_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
@@ -338,7 +345,7 @@ class Monster(pygame.sprite.Sprite):
 
 		if self.facing == "right":
 			if self.x_change == 0:
-				self.image = pygame.transform.scale((self.game.monster_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
+				self.image = pygame.transform.scale((self.monster_spritesheet.get_sprite(48, 0, 16, 16)),(32,32))
 			else:
 				self.image = self.right_animations[math.floor(self.animation_loop)]
 				# change animation every 10 frames
@@ -615,9 +622,10 @@ class Attack(pygame.sprite.Sprite):
 				self.game.pig += 1
 				pygame.mixer.Sound.play(self.killpig)
 
-			if self.game.pig >= 3:
+			if self.game.pig >= 30:
 					self.kill()
 					self.game.playing = False
+					self.game.game_over()
 
 			hits_monster = pygame.sprite.spritecollide(self, self.game.monster, True)
 			if hits_monster:
