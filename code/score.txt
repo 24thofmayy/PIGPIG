@@ -1,2 +1,10 @@
 pat, 0
 ass, 0
+pat, 0
+pIm, 300
+POON, 500
+PATTANAN, 11400
+ss, 0
+nondps, 10500
+pattan, 200
+ GIFT, 10700
