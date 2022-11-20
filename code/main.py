@@ -1,14 +1,17 @@
 import pygame, sys
-from level import *
+from pygame import mixer
+
 from sprites import *
 from settings import *
 from support import *
-from score import ScoreInput
+
 
 class Game:
 	def __init__(self):  
 		# general setup
 		pygame.init()
+		mixer.init()
+
 		self.screen = pygame.display.set_mode((WIDTH,HEIGTH)) 
 		self.clock = pygame.time.Clock()
 		self.running = True
@@ -27,12 +30,11 @@ class Game:
 		self.heart_pic = pygame.image.load('../assets/graphic/particles/fruit_01a.png')
 		
 		self.gameoversound = pygame.mixer.Sound("../assets/sound/lose.mp3")
-		self.gameoversound.set_volume(1)
+		self.gameoversound.set_volume(0.5)
 		self.winsound = pygame.mixer.Sound("../assets/sound/win.mp3")
-		self.winsound.set_volume(1)
-		self.bgsound = pygame.mixer.Sound("../assets/sound/backgroung.mp3")
-		self.bgsound.set_volume(1)
+		self.winsound.set_volume(0.5)
 
+		
 		self.scores = []
 		self.rankscores = []
 
@@ -58,15 +60,20 @@ class Game:
 					if column != "-1":
 						if stlye == "Pig":
 							Enemy(self, j-6, i-7)
+							num2 +=1
+							print('enemy ='+str(num2))
 						elif stlye == 'monster':
 							Monster(self, j-6, i-7)
+							num += 1
+							print('mon ='+str(num))
 						elif stlye == 'item':
 							Item(self, j-6, i-7)	
 						elif stlye == "Player":
 							self.player = Player(self, j-6, i-7)
 						elif stlye == "border" or  stlye == "object":
 							Block(self, j-6, i-7)
-
+					
+					
 	def new(self):
 		# start new game
 		self.playing = True
@@ -85,6 +92,7 @@ class Game:
 
 	def events(self):
 		# game loop events
+		
 		for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					self.playing = False
@@ -134,10 +142,13 @@ class Game:
 
 	def main(self):
 		# game loop
+
 		while self.playing:
+			
 			self.events()
 			self.update()
 			self.draw()
+
 
 	def game_over(self):
 		self.gameover = True
@@ -320,11 +331,16 @@ class Game:
 			self.draw_text_rank(f'{self.rankscores[i][1]}', WHITE, 20, screen, (WIDTH / 2 + 100, 180 + space))
 			space += 50
 		
-g = Game()  
+g = Game()
+pygame.mixer.music.load("../assets/sound/bg.mp3")
+pygame.mixer.music.set_volume(1)
+pygame.mixer.music.play(-1, 0.0, 3000)
+		  
 g.intro_screen()
 #g.draw_name()
 g.new()
 while g.running:
+
 	g.main()
 	g.game_over()
 

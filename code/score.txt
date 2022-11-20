@@ -11,3 +11,6 @@ pattan, 200
 pAT, 0
 pART, 100
 OO, 200
+, 0
+pp, 400
+ apt, 300
