@@ -1,1 +1,1 @@
-user_rect
+.kill()

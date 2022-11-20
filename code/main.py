@@ -99,6 +99,10 @@ class Game:
 							Attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
 						if self.player.facing == 'right':
 							Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
+					if event.key == pygame.K_ESCAPE:
+						#self.kill()
+						self.playing = False
+						self.game_over()
 
 
 	def update(self):
@@ -188,15 +192,17 @@ class Game:
 					self.main()
 
 			self.screen.fill((0,0,0))
-			if self.hp <= 0:
-				self.screen.blit(score, score_rect)
-				self.screen.blit(text, text_rect)
-				pygame.mixer.Sound.play(self.gameoversound)
-
+			
 			if self.pig >= 30:
 				self.screen.blit(win, win_rect)
 				self.screen.blit(score, score_rect)
 				pygame.mixer.Sound.play(self.winsound)
+
+			else:
+				self.screen.blit(score, score_rect)
+				self.screen.blit(text, text_rect)
+				pygame.mixer.Sound.play(self.gameoversound)
+
 			
 			username = self.title_font.render(user_ip, True, WHITE)
 			user_rect = username.get_rect(center=(WIDTH/2,HEIGTH/2+50))

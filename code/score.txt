@@ -8,3 +8,6 @@ ss, 0
 nondps, 10500
 pattan, 200
  GIFT, 10700
+pAT, 0
+pART, 100
+OO, 200
